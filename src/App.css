@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+/* global layout & background */
+:root {
+  --sidebar-width: 18rem; /* matches w-72 */
+}
+
+/* ensure full height root */
+html, body, #root {
+  height: 100%;
+}
+
+/* background image (adjust path if required) */
+body {
+  background-color: #f9fafb; /* Tailwind bg-gray-50 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-image: url('/src/assets/background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* light overlay to soften the background image for better contrast */
+/* instead of a site-wide overlay that mutes all content, we layer the background image
+   with a translucent white gradient so only the background appears softened */
+body {
+  /* use multiple backgrounds: the soft white layer above the image */
+  background-image: linear-gradient(rgba(255,255,255,0.65), rgba(255,255,255,0.65)), url('/src/assets/background.png');
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* make image stay and visible as content scrolls */
+}
+
+/* translucent rounded panel helper used by sidebar/header */
+.panel {
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+  border: 1px solid #e9eefb; /* subtle */
+  border-radius: 1rem; /* rounded-2xl */
+}
+
+/* helper class to shift content when sidebar is present on md+ */
+.shift-for-sidebar {
+  margin-left: var(--sidebar-width);
+  
+}
+
+/* small screens: don't shift */
+@media (max-width: 767px) {
+  .shift-for-sidebar {
+    margin-left: 0;
+  }
+}
