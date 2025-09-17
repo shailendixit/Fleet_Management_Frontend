@@ -10,7 +10,6 @@ import TrackOngoing from "./pages/TrackOngoingTask";
 import AssignTasks from "./pages/AssignTasks";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import Signup from "./pages/Signup";
 
 import { useSelector } from 'react-redux';
 import useInitAuth from './hooks/useInitAuth';
@@ -61,7 +60,7 @@ function AppRouter() {
   return (
     <div className="min-h-screen">
       {/* show sidebar/header only on non-auth pages */}
-      {!(location.pathname === '/login' || location.pathname === '/signup') && (
+  {!(location.pathname === '/login') && (
         <>
           <AnimatedContainer>
             <Sidebar active={active} onNav={handleNav} />
@@ -87,7 +86,6 @@ function AppRouter() {
             {/* Public routes that should redirect if already authenticated */}
             <Route element={<RedirectIfAuth/>}>
               <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
             </Route>
 
             <Route path="*" element={<Navigate to="/" replace />} />

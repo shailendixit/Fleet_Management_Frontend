@@ -42,7 +42,7 @@ function AssignModal({ zone, tasks, drivers, onClose, onAssign }) {
           <div className="flex items-center gap-3">
             <select value={bulkDriver} onChange={(e) => setBulkDriver(e.target.value)} className="px-2 py-1 border rounded">
               <option value="">Assign selected to...</option>
-              {drivers.map(d => <option key={d.driverId} value={d.driverId}>{d.driverName}</option>)}
+              {drivers.map(d => <option key={d.driverId} value={d.driverId}>{d.driverName}{d.truckNo ? ` — ${d.truckNo}` : ''}</option>)}
             </select>
             <button onClick={applyBulk} className="px-3 py-1 rounded bg-indigo-100 text-indigo-700">Apply to selected</button>
             <button className="px-3 py-1 rounded bg-gray-200" onClick={onClose}>Close</button>
@@ -64,7 +64,7 @@ function AssignModal({ zone, tasks, drivers, onClose, onAssign }) {
           </div>
         </div>
 
-        <div className="space-y-3 max-h-[60vh] overflow-auto">
+            <div className="space-y-3 max-h-[60vh] overflow-auto">
           {tasks.length === 0 && <div className="p-4 text-center text-gray-600">No tasks in this zone</div>}
           {tasks.map(t => {
         const id = t.taskId ?? t.id; // support both shapes
@@ -94,7 +94,7 @@ function AssignModal({ zone, tasks, drivers, onClose, onAssign }) {
                 <div className="flex items-center gap-3">
                 <select value={assignMap[id] || ''} onChange={(e) => handleChange(id, e.target.value)} className="px-2 py-1 border rounded bg-white">
                   <option value="">Select driver</option>
-                  {drivers.map(d => <option key={d.driverId} value={d.driverId}>{d.driverName}</option>)}
+                  {drivers.map(d => <option key={d.driverId} value={d.driverId}>{d.driverName}{d.truckNo ? ` — ${d.truckNo}` : ''}</option>)}
                 </select>
               </div>
             </div>
@@ -190,18 +190,22 @@ export default function AssignTasks() {
       <AnimatedContainer>
         <div className="max-h-[60vh] overflow-auto p-2">
             <div className="relative">
-              {loading ? (
-                <div className="w-full h-40 flex items-center justify-center">
-                  <Loading size={36} className="text-gray-700" color="#374151" />
-                </div>
-              ) : (
-                <div className="grid grid-cols-3 gap-4">
-                  {Object.entries(zones).map(([z, tasks]) => (
-                    <ZoneCard key={z} name={z} count={tasks.length} onOpen={(name) => setZoneOpen(name)} />
-                  ))}
-                </div>
-              )}
-            </div>
+                {loading ? (
+                  <div className="w-full h-40 flex items-center justify-center">
+                    <Loading size={36} className="text-gray-700" color="#374151" />
+                  </div>
+                ) : (
+                  unassigned.length === 0 ? (
+                    <div className="w-full h-40 flex items-center justify-center text-gray-600">No unassigned tasks available</div>
+                  ) : (
+                    <div className="grid grid-cols-3 gap-4">
+                      {Object.entries(zones).map(([z, tasks]) => (
+                        <ZoneCard key={z} name={z} count={tasks.length} onOpen={(name) => setZoneOpen(name)} />
+                      ))}
+                    </div>
+                  )
+                )}
+              </div>
         </div>
       </AnimatedContainer>
 
