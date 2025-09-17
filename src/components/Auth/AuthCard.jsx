@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux'
 import { setAuth } from '../../store/reduxStore'
 import Loading from '../UI/Loading'
 import { useToast } from '../UI/ToastProvider'
+import Logo from "../../assets/Company-Logo.png"; // adjust extension if needed
 export default function AuthCard({ mode = 'login' }) {
   const navigate = useNavigate()
   const isLogin = mode === 'login'
@@ -98,11 +99,17 @@ export default function AuthCard({ mode = 'login' }) {
       <div className="relative w-full max-w-2xl">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
           {/* left: decorative */}
-          <div className="hidden md:flex flex-col justify-center p-10 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-500 text-white shadow-lg">
-            <img src="/src/assets/Company-Logo.png" alt="logo" className="w-24 mb-6" />
-            <h2 className="text-3xl font-semibold mb-2">Welcome to Driver Assignment</h2>
-            <p className="text-indigo-100/90">Manage tasks, track drivers, and stay on top of deliveries with a clean, fast interface.</p>
-          </div>
+          <div className="hidden md:flex flex-col items-center justify-center p-10 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-500 text-white shadow-lg text-center">
+  <img 
+    src={Logo} 
+    alt="logo" 
+    className="w-35 h-24 mb-6 rounded-3xl object-cover" 
+  />
+  <h2 className="text-3xl font-semibold mb-2">Welcome to Driver Assignment</h2>
+  <p className="text-indigo-100/90 max-w-md">
+    Manage tasks, track drivers, and stay on top of deliveries with a clean, fast interface.
+  </p>
+</div>
 
           {/* right: form */}
           <div className="bg-white/80 backdrop-blur-md rounded-2xl p-8 shadow-xl">
@@ -111,7 +118,6 @@ export default function AuthCard({ mode = 'login' }) {
                 <h3 className="text-2xl font-semibold">{isLogin ? 'Sign in to your account' : 'Create an account'}</h3>
                 <p className="text-sm text-gray-600">{isLogin ? 'Enter your credentials to continue.' : 'Start managing assignments quickly.'}</p>
               </div>
-              <img src="/src/assets/react.svg" alt="decor" className="w-12 opacity-60" />
             </div>
 
             <form onSubmit={submit} className="space-y-4">
@@ -159,11 +165,9 @@ export default function AuthCard({ mode = 'login' }) {
 
             <div className="mt-4 text-center text-sm text-gray-600">
               {isLogin ? (
-                <>
-                  Don't have an account? <Link to="/signup" className="text-indigo-600 hover:underline">Sign up</Link>
-                </>
+                <>If you don't have an account contact your administrator.</>
               ) : (
-                <>Already have an account? <Link to="/login" className="text-indigo-600 hover:underline">Sign in</Link></>
+                <>Account creation via this page is disabled. Administrators can create users from the dashboard.</>
               )}
             </div>
           </div>

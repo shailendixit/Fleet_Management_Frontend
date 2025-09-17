@@ -5,8 +5,8 @@ import apiClient from './apiClient';
  * @param {{username:string,email:string,password:string}} payload
  * @returns {Promise<{success:boolean,status?:number,data?:any,error?:string}>}
  */
-export async function signup({ username, email, password }) {
-  return await apiClient.post('/auth/signup', { username, email, password }, { credentials: 'include' });
+export async function signup({ username, email, password ,role}) {
+  return await apiClient.post('/auth/signup', { username, email, password,role }, { credentials: 'include' });
 }
 
 /**

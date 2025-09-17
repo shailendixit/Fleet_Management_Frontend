@@ -4,14 +4,14 @@ import api from './apiClient';
  * Fetch completed tasks from backend
  */
 export async function getCompleted() {
-  return await api.get('/tasks/getCompletedTasks', { timeout: 12000 });
+  return await api.get('/tasks/getCompletedTasks', { timeout: 30000 });
 }
 
 /**
  * Fetch ongoing tasks from backend
  */
 export async function getOngoing() {
-  return await api.get('/tasks/getTasksInProgress', { timeout: 12000 });
+  return await api.get('/tasks/getTasksInProgress', { timeout: 30000 });
 }
 
 /**
@@ -19,7 +19,7 @@ export async function getOngoing() {
  * a small sample set is returned so you can test UI behaviour.
  */
 export async function getUnassigned() {
-  const res = await api.get('/tasks/getUnassignedTasks', { timeout: 12000 });
+  const res = await api.get('/tasks/getUnassignedTasks', { timeout: 30000 });
   if (res && res.success) return res;
 
   // fallback sample data for offline testing
@@ -37,7 +37,7 @@ export async function getUnassigned() {
  * Fetch available drivers. Fallback sample used for dev/test.
  */
 export async function getDrivers() {
-  const res = await api.get('/tasks/getAvailableDrivers', { timeout: 12000 });
+  const res = await api.get('/tasks/getAvailableDrivers', { timeout: 30000 });
   if (res && res.success) return res;
   return { success: true, data: [ { id: 'd1', name: 'Adam' }, { id: 'd2', name: 'Mark' }, { id: 'd3', name: 'Lucy' } ] };
 }
