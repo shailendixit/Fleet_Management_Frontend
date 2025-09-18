@@ -76,8 +76,8 @@ export default function Header({ active = "home", onNav = () => {} }) {
                     {isAdmin && (
                       <button className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50" onClick={() => { setProfileOpen(false); setCreateOpen(true); }}>Create user</button>
                     )}
-                    <div className="border-t" />
-                    <button className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-gray-50" onClick={LogoutBtn}>Logout</button>
+                   
+                
                   </div>
                 </div>
               )}
