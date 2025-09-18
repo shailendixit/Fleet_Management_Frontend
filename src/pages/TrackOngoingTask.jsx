@@ -40,6 +40,7 @@ export default function TrackOngoing() {
       { name: "State", selector: (row) => row.stateCode, sortable: true, cell: (r) => <span className="text-sm text-gray-600">{r.stateCode}</span> },
       { name: "Description", selector: (row) => row.description },
       { name: "Driver Name", selector: (row) => row.driverName ?? row.driver },
+      { name: "Status", selector: (row) => row.status, sortable: true, cell: (r) => <span className="text-sm text-gray-600">{r.status}</span> },
       {
         name: "Track Item",
         selector: (row) => row.podUrl,
