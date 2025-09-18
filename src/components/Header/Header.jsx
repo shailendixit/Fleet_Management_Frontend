@@ -59,8 +59,11 @@ export default function Header({ active = "home", onNav = () => {} }) {
 
             <div className="relative" ref={profileRef}>
               <motion.button onClick={() => setProfileOpen((s) => !s)} whileHover={{ scale: 1.03 }} className="flex items-center gap-2 p-1 rounded-full hover:bg-white/60 focus:outline-none" aria-haspopup="true" aria-expanded={profileOpen}>
-                <span className="hidden sm:inline text-sm text-gray-700">{auth?.user?.username || "Admin"}</span>
-                <img src="https://i.pravatar.cc/36" alt="avatar" className="w-8 h-8 rounded-full border border-gray-200" />
+                <span className="hidden sm:inline text-md text-gray-700">{auth?.user?.username || "Admin"}</span>
+                  <div className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 bg-gray-300 text-gray-700 text-sm font-light">
+    {(auth?.user?.username || "Admin").substring(0, 2).toUpperCase()}
+  </div>
+
               </motion.button>
 
               {profileOpen && (

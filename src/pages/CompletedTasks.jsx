@@ -34,7 +34,7 @@ export default function CompletedTasks() {
     () => [
       {
         name: "Invoice No.",
-        selector: (row) => row.invoice,
+        selector: (row) => row.invoiceId,
         sortable: true,
         cell: (row) => (
           <button
@@ -49,14 +49,14 @@ export default function CompletedTasks() {
         ),
         grow: 0.6,
       },
-      { name: "Order Number", selector: (row) => row.order, sortable: true, grow: 0.8 },
-      { name: "Postcode", selector: (row) => row.postcode, sortable: true, grow: 0.4 },
-      { name: "Status", selector: (row) => row.status, sortable: true, grow: 0.6, cell: (r) => <span className="text-sm text-gray-600">{r.status}</span> },
+      { name: "Order Number", selector: (row) => row.orderNumber, sortable: true, grow: 0.8 },
+      { name: "Postcode", selector: (row) => row.postalCode, sortable: true, grow: 0.4 },
+      { name: "Completed On", selector: (row) => row.completedAt, sortable: true, grow: 0.6, cell: (r) => <span className="text-sm text-gray-600">{r.completedAt.split("T")[0]}</span> },
       { name: "Description", selector: (row) => row.description, grow: 1 },
-      { name: "Driver Name", selector: (row) => row.driver, grow: 0.8 },
+      { name: "Driver Name", selector: (row) => row.driverName, grow: 0.8 },
       {
         name: "Proof of Delivery",
-        selector: (row) => row.podUrl,
+        selector: (row) => row.POD,
         sortable: false,
         // align right via cell renderer wrapper
         cell: (row) => (
