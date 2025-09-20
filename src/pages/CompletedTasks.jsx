@@ -62,7 +62,7 @@ export default function CompletedTasks() {
         cell: (row) => (
           <div className="text-right">
             <a
-              href={row.podUrl}
+              href={row.POD}
               target="_blank"
               rel="noreferrer"
               onClick={(e) => e.stopPropagation()}
