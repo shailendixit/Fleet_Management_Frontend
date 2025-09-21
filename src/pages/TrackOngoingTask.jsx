@@ -39,7 +39,8 @@ export default function TrackOngoing() {
       { name: "Zone", selector: (row) => row.zoneNo, sortable: true },
       { name: "State", selector: (row) => row.stateCode, sortable: true, cell: (r) => <span className="text-sm text-gray-600">{r.stateCode}</span> },
       { name: "Description", selector: (row) => row.description },
-      { name: "Driver Name", selector: (row) => row.driverName ?? row.driver },
+      { name: "Driver Name", selector: (row) => row.driverName ?? row.driverName },
+      { name: "TruckNo", selector: (row) => row.truckNo ?? row.truckNo },
       { name: "Status", selector: (row) => row.status, sortable: true, cell: (r) => <span className="text-sm text-gray-600">{r.status}</span> },
       {
         name: "Track Item",
