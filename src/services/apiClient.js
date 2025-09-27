@@ -1,4 +1,5 @@
 import { config } from "../config/config";
+import store, { clearAuth } from '../store/reduxStore'
 
 const BASE_URL = config.backendBaseUrl;
 
@@ -74,7 +75,24 @@ async function request(path, { method = "GET", headers = {}, body, credentials =
     }
 
     if (!res.ok) {
-      return { success: false, status: res.status, error: data?.message || data || res.statusText, data };
+      const errMsg = data?.message || data || res.statusText
+      // centrally handle expired/invalid token responses
+      const lc = String(errMsg || '').toLowerCase();
+      if (res.status === 401 || lc.includes('invalid or expired token') || lc.includes('token expired') || lc.includes('invalid token')) {
+        try {
+          // clear client-side token storage
+          localStorage.removeItem('auth_token')
+        } catch (e) {}
+        try {
+          // clear redux auth state
+          store.dispatch(clearAuth())
+        } catch (e) {}
+        try {
+          // redirect to login page
+          if (typeof window !== 'undefined') window.location.href = '/login'
+        } catch (e) {}
+      }
+      return { success: false, status: res.status, error: errMsg, data };
     }
 
     return { success: true, status: res.status, data };

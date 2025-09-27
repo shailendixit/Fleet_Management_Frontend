@@ -80,13 +80,25 @@ export default function CompletedTasks() {
     [navigate]
   );
 
-  const filtered = useMemo(() => {
-    const q = (filter || "").trim().toLowerCase();
-    if (!q) return items || [];
-    return (items || []).filter((r) =>
-      ["invoice", "order", "postcode", "status", "description", "driver"].some((k) => String(r[k] ?? "").toLowerCase().includes(q))
-    );
-  }, [filter, items]);
+  // const filtered = useMemo(() => {
+  //   const q = (filter || "").trim().toLowerCase();
+  //   if (!q) return items || [];
+  //   return (items || []).filter((r) =>
+  //     ["invoice", "order", "postcode", "status", "description", "driver"].some((k) => String(r[k] ?? "").toLowerCase().includes(q))
+  //   );
+  // }, [filter, items]);
+   const filtered = useMemo(() => {
+      const q = (filter || "").trim().toLowerCase();
+      if (!q) return items || [];
+      const keys = ["invoiceId","invoice","orderNumber","order","zoneNo","postalCode","postcode","stateCode","status","description","driverName","driver"];
+      return (items || []).filter((r) => {
+        for (let k of keys) {
+          const v = String(r[k] ?? "");
+          if (v.toLowerCase().includes(q)) return true;
+        }
+        return false;
+      });
+    }, [filter, items]);
 
   return (
     <AnimatedContainer>
