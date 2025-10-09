@@ -44,7 +44,7 @@ export default function CompletedTasks() {
             }}
             className="text-indigo-600 hover:underline text-sm font-medium"
           >
-            {row.invoice}
+            {row.invoiceId}
           </button>
         ),
         grow: 0.6,
