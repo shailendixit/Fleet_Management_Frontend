@@ -36,17 +36,7 @@ export default function CompletedTasks() {
         name: "Invoice No.",
         selector: (row) => row.invoiceId,
         sortable: true,
-        cell: (row) => (
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              navigate(`/invoices/${row.invoice}`);
-            }}
-            className="text-indigo-600 hover:underline text-sm font-medium"
-          >
-            {row.invoiceId}
-          </button>
-        ),
+        cell: (row) => (row.invoiceId),
         grow: 0.6,
       },
       { name: "Order Number", selector: (row) => row.orderNumber, sortable: true, grow: 0.8 },
