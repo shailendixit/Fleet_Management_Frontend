@@ -95,7 +95,7 @@ export default function CompletedTasks() {
       <div className="mb-4 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold">Completed Assignments</h1>
-          <div className="text-sm text-gray-600 mt-1">Total Assignments <span className="ml-2 px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded">20</span></div>
+          <div className="text-sm text-gray-600 mt-1">Total Assignments <span className="ml-2 px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded">{filtered.length}</span></div>
         </div>
 
         <div className="flex items-center gap-3">

@@ -39,7 +39,7 @@ export default function TrackOngoing() {
       { name: "Zone", selector: (row) => row.zoneNo, sortable: true },
       { name: "State", selector: (row) => row.stateCode, sortable: true, cell: (r) => <span className="text-sm text-gray-600">{r.stateCode}</span> },
       { name: "Description", selector: (row) => row.description },
-      { name: "Driver Name", selector: (row) => row.driverName ?? row.driverName },
+      { name: "Driver Name", selector: (row) => row.driverName ?? row.driverName,sortable: true },
       { name: "TruckNo", selector: (row) => row.truckNo ?? row.truckNo },
       { name: "Status", selector: (row) => row.status, sortable: true, cell: (r) => <span className="text-sm text-gray-600">{r.status}</span> },
       {
@@ -83,7 +83,7 @@ export default function TrackOngoing() {
         <div className="mb-4 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-semibold">Ongoing Assignments</h1>
-            <div className="text-sm text-gray-600 mt-1">Total Assignments <span className="ml-2 px-2 py-0.5 bg-sky-50 text-sky-700 rounded">20</span></div>
+            <div className="text-sm text-gray-600 mt-1">Total Assignments <span className="ml-2 px-2 py-0.5 bg-sky-50 text-sky-700 rounded">{filtered.length}</span></div>
           </div>
 
           <div className="flex items-center gap-3">
