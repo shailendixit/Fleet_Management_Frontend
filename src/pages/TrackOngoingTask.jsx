@@ -5,7 +5,7 @@ import { fetchOngoing, selectOngoing } from '../store/tasksSlice';
 import { useToast } from '../components/UI/ToastProvider';
 import AnimatedContainer from '../components/UI/AnimatedContainer';
 import LoadingOverlay from '../components/UI/LoadingOverlay';
-
+const API_BASE = import.meta.env.VITE_BACKEND_API_URL;
 const SAMPLE = [
   { id: "1", invoice: "1261756", order: "20116018", postcode: "2170", status: "In Progress", description: "Refrig", driver: "Adam", podUrl: "/pods/1261756.pdf" },
   { id: "2", invoice: "1261757", order: "20116020", postcode: "2167", status: "Complete", description: "AC", driver: "Mark", podUrl: "/pods/1261757.pdf" },
@@ -77,6 +77,34 @@ export default function TrackOngoing() {
     });
   }, [filter, items]);
 
+  // ✅ Function to download Excel from backend
+  const handleDownloadExcel = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/tasks/getTaskWithoutInvoice`, {
+      method: "GET",
+      });
+
+      if (!res.ok) throw new Error("Failed to download file");
+
+      // Convert response to Blob (binary file)
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      // Create a temporary link and trigger download
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "tasks_without_invoice.xlsx");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      show("success", "Excel file downloaded successfully");
+    } catch (err) {
+      console.error(err);
+      show("error", "Failed to download Excel file");
+    }
+  };
+
   return (
     <div>
       <AnimatedContainer className="mb-4">
@@ -103,6 +131,13 @@ export default function TrackOngoing() {
           {error && <div className="text-red-600 p-3">Error loading tasks...</div>}
           <div className="mb-3 flex justify-end">
             <button onClick={() => dispatch(fetchOngoing())} className="px-3 py-1 rounded bg-indigo-600 text-white text-sm hover:bg-indigo-700">Refresh</button>
+             {/* ✅ Download Excel button */}
+            <button
+              onClick={handleDownloadExcel}
+              className="px-3 py-1 rounded bg-green-600 text-white text-sm hover:bg-green-700"
+            >
+              Download Excel
+            </button>
           </div>
           <DataTable
             columns={columns}
