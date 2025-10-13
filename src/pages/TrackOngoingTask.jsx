@@ -130,7 +130,7 @@ export default function TrackOngoing() {
           <LoadingOverlay loading={loading} text="Loading ongoing assignments..." fullScreen={loading} />
           {error && <div className="text-red-600 p-3">Error loading tasks...</div>}
           <div className="mb-3 flex justify-end">
-            <button onClick={() => dispatch(fetchOngoing())} className="px-3 py-1 rounded bg-indigo-600 text-white text-sm hover:bg-indigo-700">Refresh</button>
+            <button onClick={() => dispatch(fetchOngoing())} className="px-3 py-1 my-0.5 rounded bg-indigo-600 text-white text-sm hover:bg-indigo-700">Refresh</button>
              {/* ✅ Download Excel button */}
             <button
               onClick={handleDownloadExcel}
