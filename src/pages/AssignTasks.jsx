@@ -221,6 +221,7 @@ export default function AssignTasks() {
               cubic: drv ? drv.cubic : undefined,
               driverName: drv ? drv.driverName : undefined,
               truckType: drv ? drv.truckType : undefined,
+              TrackerID: Number(drv ? drv.TrackerID : undefined)
             }
           }).filter(t => t.driverName);
           if (tasksPayload.length === 0) { show('error', 'No assignments selected'); return }

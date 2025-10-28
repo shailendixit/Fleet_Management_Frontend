@@ -2,6 +2,7 @@ import React, { useMemo, useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchOngoing, selectOngoing } from '../store/tasksSlice';
+import tasksService from '../services/tasks.service';
 import { useToast } from '../components/UI/ToastProvider';
 import AnimatedContainer from '../components/UI/AnimatedContainer';
 import LoadingOverlay from '../components/UI/LoadingOverlay';
@@ -24,14 +25,48 @@ export default function TrackOngoing() {
   const { items, loading, error } = useSelector(selectOngoing);
   const [filter, setFilter] = useState("");
   const [selectedRows, setSelectedRows] = useState([]);
+  const [vehiclesMap, setVehiclesMap] = useState({});
+  const [lastNetstarRefresh, setLastNetstarRefresh] = useState(null); // ✅ Added
 
-  const { show } = useToast()
+  const { show } = useToast();
+
+  // ✅ Fetch Netstar Vehicles
+  const fetchNetstarVehicles = async () => {
+    try {
+      const res = await tasksService.getNetstarVehicles();
+
+      if (res && res.success && res.data?.Vehicles) {
+        const map = Object.fromEntries(
+          res.data.Vehicles.map(v => [Number(v.TrackerID), v])
+        );
+        setVehiclesMap(map);
+        setLastNetstarRefresh(new Date()); // store local refresh timestamp
+      } else {
+        console.warn("Netstar fetch error", res?.error);
+        setVehiclesMap({});
+      }
+    } catch (e) {
+      console.warn("Netstar fetch failed", e);
+      setVehiclesMap({});
+    }
+  };
+
+  // ✅ Combined effect (fetch both APIs on mount)
   useEffect(() => {
-    dispatch(fetchOngoing()).unwrap().catch((err) => {
-      try { show('error', String('Failed to load ongoing tasks')) } catch (e) {}
-    });
+    let mounted = true;
+    (async () => {
+      try {
+        await dispatch(fetchOngoing()).unwrap();
+      } catch {
+        show("error", "Failed to load ongoing tasks");
+      }
+
+      if (mounted) await fetchNetstarVehicles();
+    })();
+    return () => { mounted = false };
   }, [dispatch]);
 
+  // ✅ Columns
   const columns = useMemo(
     () => [
       { name: "Invoice No.", selector: (row) => row.invoiceId ?? row.invoice, sortable: true },
@@ -39,29 +74,43 @@ export default function TrackOngoing() {
       { name: "Zone", selector: (row) => row.zoneNo, sortable: true },
       { name: "State", selector: (row) => row.stateCode, sortable: true, cell: (r) => <span className="text-sm text-gray-600">{r.stateCode}</span> },
       { name: "Description", selector: (row) => row.description },
-      { name: "Driver Name", selector: (row) => row.driverName ?? row.driverName,sortable: true },
+      { name: "Driver Name", selector: (row) => row.driverName ?? row.driverName, sortable: true },
       { name: "TruckNo", selector: (row) => row.truckNo ?? row.truckNo },
       { name: "Status", selector: (row) => row.status, sortable: true, cell: (r) => <span className="text-sm text-gray-600">{r.status}</span> },
+
       {
-        name: "Track Item",
-        selector: (row) => row.podUrl,
-        // removed `right: true` to avoid DOM warning; align in cell
-        cell: (row) => (
-          <div className="text-right">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(row.podUrl, "_blank");
-              }}
-              className="px-3 py-1 rounded-md bg-indigo-50 text-indigo-700 text-sm hover:bg-indigo-100"
-            >
-              Location
-            </button>
+        name: (
+          <div className="flex flex-col items-start">
+            <span>Track Item</span>
+            {lastNetstarRefresh && (
+              <span className="text-xs text-gray-500">
+                Last updated: {lastNetstarRefresh.toLocaleString('en-AU', {
+                  day: '2-digit',
+                  month: 'short',
+                  year: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
+              </span>
+            )}
           </div>
         ),
+        selector: (row) => row.TrackerID ?? row.trackerId,
+        cell: (row) => {
+          const trackerId = Number(row.TrackerID ?? row.trackerId ?? row.TrackID);
+          const v = vehiclesMap[trackerId];
+
+          if (!v) return <span className="text-sm text-gray-500">—</span>;
+
+          const street = v.StreetOrLocation || '';
+          const suburb = v.SuburbOrZone || '';
+          const text = [street, suburb].filter(Boolean).join(' — ');
+
+          return <span className="text-sm text-gray-700">{text || '—'}</span>;
+        },
       },
     ],
-    []
+    [vehiclesMap, lastNetstarRefresh]
   );
 
   const filtered = useMemo(() => {
@@ -75,6 +124,7 @@ export default function TrackOngoing() {
       }
       return false;
     });
+
   }, [filter, items]);
 
   // ✅ Function to download Excel from backend
@@ -129,16 +179,39 @@ export default function TrackOngoing() {
         <div className="panel p-3 rounded-2xl border border-indigo-100 relative">
           <LoadingOverlay loading={loading} text="Loading ongoing assignments..." fullScreen={loading} />
           {error && <div className="text-red-600 p-3">Error loading tasks...</div>}
-          <div className="mb-3 flex justify-end">
-            <button onClick={() => dispatch(fetchOngoing())} className="px-3 py-1 my-0.5 rounded bg-indigo-600 text-white text-sm hover:bg-indigo-700">Refresh</button>
-             {/* ✅ Download Excel button */}
-            <button
-              onClick={handleDownloadExcel}
-              className="px-3 py-1 rounded bg-green-600 text-white text-sm hover:bg-green-700"
-            >
-              Download Excel
-            </button>
-          </div>
+          <div className="mb-3 flex justify-end gap-2">
+<button
+  onClick={async () => {
+    try {
+      await dispatch(fetchOngoing()).unwrap();
+      await fetchNetstarVehicles(); // ✅ Also refresh locations
+      show("success", "All data refreshed successfully");
+    } catch (err) {
+      show("error", "Failed to refresh data");
+      console.error(err);
+    }
+  }}
+  className="px-3 py-1 my-0.5 rounded bg-indigo-600 text-white text-sm hover:bg-indigo-700"
+>
+  Refresh All
+</button>
+
+
+  <button
+    onClick={fetchNetstarVehicles}
+    className="px-3 py-1 my-0.5 rounded bg-blue-600 text-white text-sm hover:bg-blue-700"
+  >
+    Refresh Locations
+  </button>
+
+  <button
+    onClick={handleDownloadExcel}
+    className="px-3 py-1 rounded bg-green-600 text-white text-sm hover:bg-green-700"
+  >
+    Download Excel
+  </button>
+</div>
+
           <DataTable
             columns={columns}
             data={filtered}
@@ -151,6 +224,7 @@ export default function TrackOngoing() {
             customStyles={customStyles}
             responsive
           />
+          {/* location displayed inline in Track Item column */}
         </div>
       </AnimatedContainer>
     </div>

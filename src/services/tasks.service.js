@@ -51,4 +51,12 @@ export async function assignTasks(payload) {
   return await api.post('/tasks/assignTasks', { tasks: payload }, { timeout: 15000 });
 }
 
-export default { getCompleted, getOngoing, getUnassigned, getDrivers, assignTasks };
+/**
+ * Fetch Netstar vehicles directly from external Netstar API using credentials from env.
+ * Returns: { success: true, data: VehiclesArray } or { success: false, error }
+ */
+export async function getNetstarVehicles() {
+  return await api.get('/tasks/getLocation', { timeout: 30000 });
+}
+
+export default { getCompleted, getOngoing, getUnassigned, getDrivers, assignTasks, getNetstarVehicles };
