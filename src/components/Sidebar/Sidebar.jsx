@@ -8,6 +8,7 @@ const navItems = [
   { id: "completed", label: "Completed Tasks", icon: CheckIcon },
   { id: "track", label: "Track Ongoing", icon: TrackIcon },
   { id: "assign", label: "Assign tasks", icon: AssignIcon },
+  { id: "maintain", label: "Maintain Drivers", icon: MaintainenceIcon },
 ];
 
 export default function Sidebar({ active = "assign", onNav = () => {} }) {
@@ -89,6 +90,26 @@ function AssignIcon({ className = "text-gray-400" }) {
     </svg>
   );
 }
+function MaintainenceIcon({ className = "text-gray-400" }) {
+  return (
+    <svg
+      className={`h-5 w-5 ${className}`}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      viewBox="0 0 24 24"
+      aria-hidden
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M10.325 4.317a1 1 0 011.35-.936l1.618.54a1 1 0 00.949-.154l1.272-.955a1 1 0 011.387.316l1.066 1.647a1 1 0 00.916.44l1.733-.138a1 1 0 011.037.937l.135 1.733a1 1 0 00.44.916l1.647 1.066a1 1 0 01.316 1.387l-.955 1.272a1 1 0 00-.154.949l.54 1.618a1 1 0 01-.936 1.35l-1.733.135a1 1 0 00-.916.44l-1.066 1.647a1 1 0 01-1.387.316l-1.272-.955a1 1 0 00-.949-.154l-1.618.54a1 1 0 01-1.35-.936l-.135-1.733a1 1 0 00-.44-.916l-1.647-1.066a1 1 0 01-.316-1.387l.955-1.272a1 1 0 00.154-.949l-.54-1.618a1 1 0 01.936-1.35l1.733-.135a1 1 0 00.916-.44l1.066-1.647a1 1 0 011.387-.316l1.272.955a1 1 0 00.949.154l1.618-.54z"
+      />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}
+
 function LogoutIcon({ className = "text-white" }) {
   return (
     <svg className={`h-5 w-5 ${className}`} fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" aria-hidden>

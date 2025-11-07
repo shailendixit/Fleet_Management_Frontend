@@ -10,12 +10,13 @@ import TrackOngoing from "./pages/TrackOngoingTask";
 import AssignTasks from "./pages/AssignTasks";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-
+import MaintainDriver from "./pages/Maintainence";
 import { useSelector } from 'react-redux';
 import useInitAuth from './hooks/useInitAuth';
 import RequireAuth from './components/Auth/RequireAuth';
 import RedirectIfAuth from './components/Auth/RedirectIfAuth';
 import Loading from './components/UI/Loading'
+import { main } from "framer-motion/client";
 
 // Home moved to src/pages/Home.jsx
 // AssignTasks component is implemented in src/pages/AssignTasks.jsx
@@ -26,12 +27,14 @@ const idToPath = {
   completed: "/completed",
   track: "/track",
   assign: "/assign",
+  maintain: "/maintain",
 };
 const pathToId = (path) => {
   if (path === "/") return "home";
   if (path.startsWith("/completed")) return "completed";
   if (path.startsWith("/track")) return "track";
   if (path.startsWith("/assign")) return "assign";
+  if (path.startsWith("/maintain")) return "maintain";
   return "home";
 };
 
@@ -81,6 +84,7 @@ function AppRouter() {
               <Route path="/completed" element={<CompletedTasks />} />
               <Route path="/track" element={<TrackOngoing />} />
               <Route path="/assign" element={<AssignTasks />} />
+              <Route path="/maintain" element={<MaintainDriver />} />
             </Route>
 
             {/* Public routes that should redirect if already authenticated */}
