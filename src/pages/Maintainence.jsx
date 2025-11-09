@@ -429,7 +429,7 @@ export default function Maintainence() {
         footer={
           <div className="flex justify-between items-center w-full">
             <div className="text-xs text-slate-500">
-              * All fields are optional by schema. Types and status are validated. Uniqueness is enforced by backend.
+              * Username must be unique.
             </div>
             <div className="flex gap-2">
               <button
