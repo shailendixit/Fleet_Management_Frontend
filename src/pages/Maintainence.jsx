@@ -255,7 +255,7 @@ export default function Maintainence() {
         if (data?.field) {
           setAddErrors((e) => ({ ...e, [data.field]: 'Already in use' }));
         }
-        show('error', data?.error || data?.message || 'Failed to add driver');
+        show('error', data?.message || data?.error || 'Failed to add driver');
       }
     } catch (e) {
       console.error(e);
