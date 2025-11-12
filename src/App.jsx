@@ -8,6 +8,7 @@ import AnimatedContainer from './components/UI/AnimatedContainer';
 import CompletedTasks from "./pages/CompletedTasks";
 import TrackOngoing from "./pages/TrackOngoingTask";
 import AssignTasks from "./pages/AssignTasks";
+import AllVehiclesMap from "./pages/AllVechileLocation";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import MaintainDriver from "./pages/Maintainence";
@@ -28,6 +29,7 @@ const idToPath = {
   track: "/track",
   assign: "/assign",
   maintain: "/maintain",
+  location: "/location",
 };
 const pathToId = (path) => {
   if (path === "/") return "home";
@@ -35,6 +37,7 @@ const pathToId = (path) => {
   if (path.startsWith("/track")) return "track";
   if (path.startsWith("/assign")) return "assign";
   if (path.startsWith("/maintain")) return "maintain";
+  if(path.startsWith("/location")) return "location";
   return "home";
 };
 
@@ -45,7 +48,7 @@ function AppRouter() {
   const auth = useSelector((s) => s.auth);
   const [active, setActive] = useState(pathToId(location.pathname));
 
-  // keep active in sync with URL (handles browser nav / direct links)
+  // keep active in sync with URL ( browser nav / direct links)
   useEffect(() => {
     setActive(pathToId(location.pathname));
   }, [location.pathname]);
@@ -85,6 +88,7 @@ function AppRouter() {
               <Route path="/track" element={<TrackOngoing />} />
               <Route path="/assign" element={<AssignTasks />} />
               <Route path="/maintain" element={<MaintainDriver />} />
+              <Route path="/location" element={<AllVehiclesMap />} />
             </Route>
 
             {/* Public routes that should redirect if already authenticated */}

@@ -9,6 +9,7 @@ const navItems = [
   { id: "track", label: "Track Ongoing", icon: TrackIcon },
   { id: "assign", label: "Assign tasks", icon: AssignIcon },
   { id: "maintain", label: "Maintain Drivers", icon: MaintainenceIcon },
+  { id: "location", label: "Vehicle Locations", icon: LocationIcon },
 ];
 
 export default function Sidebar({ active = "assign", onNav = () => {} }) {
@@ -84,6 +85,13 @@ function TrackIcon({ className = "text-gray-400" }) {
   );
 }
 function AssignIcon({ className = "text-gray-400" }) {
+  return (
+    <svg className={`h-5 w-5 ${className}`} fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" aria-hidden>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3M7 21h10a2 2 0 002-2V7a2 2 0 00-2-2h-3.5L12 3 8.5 5H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+    </svg>
+  );
+}
+function LocationIcon({ className = "text-gray-400" }) {
   return (
     <svg className={`h-5 w-5 ${className}`} fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" aria-hidden>
       <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3M7 21h10a2 2 0 002-2V7a2 2 0 00-2-2h-3.5L12 3 8.5 5H5a2 2 0 00-2 2v12a2 2 0 002 2z" />

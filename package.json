@@ -10,11 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "axios": "^1.4.0",
     "@reduxjs/toolkit": "^2.9.0",
     "@tailwindcss/vite": "^4.1.13",
     "appwrite": "^19.0.0",
+    "axios": "^1.4.0",
     "framer-motion": "^12.23.12",
+    "leaflet": "^1.9.4",
     "react": "^18.2.0",
     "react-data-table-component": "^7.7.0",
     "react-dom": "^18.2.0",
