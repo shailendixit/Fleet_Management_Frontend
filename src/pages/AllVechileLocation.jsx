@@ -214,7 +214,7 @@ export default function AllVehiclesMap() {
     const q = (query || "").trim().toLowerCase();
     if (!q) return vehicles;
     return vehicles.filter(v => {
-      const fields = [v.VehicleName, v.Rego, v.SuburbOrZone, v.GroupName, v.VehicleType];
+      const fields = [v.VehicleName, v.Rego, v.SuburbOrZone, v.GroupName, v.VehicleType,v.TrackerID];
       return fields.some(f => (f || "").toString().toLowerCase().includes(q));
     });
   }, [vehicles, query]);
@@ -279,7 +279,7 @@ export default function AllVehiclesMap() {
                   <div className="text-sm font-semibold text-slate-800">{v.VehicleName || v.Rego || 'Vehicle'}</div>
                   <div className="text-xs text-slate-500">{v.SuburbOrZone || '-'}</div>
                   <div className="text-xs text-slate-400 mt-1">
-                    <span className="mr-2"><b>Rego:</b> {v.Rego || '-'}</span>
+                    <span className="mr-2"><b>TrackerId:</b> {v.TrackerID || '-'}</span>
                     <span className="mr-2"><b>Speed:</b> {v.Speed ?? 0} km/h</span>
                   </div>
                 </div>
