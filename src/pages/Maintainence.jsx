@@ -346,8 +346,10 @@ export default function Maintainence() {
               <Loading size={36} className="text-gray-700" color="#374151" />
             </div>
           ) : (
-            <div className="overflow-auto">
-              <table className="min-w-full divide-y divide-gray-200 text-sm">
+            // ===== CHANGE: use overflow-x-auto to enable horizontal scrolling instead of squeezing =====
+            <div className="overflow-x-auto">
+              {/* ===== CHANGE: use min-w-max + whitespace-nowrap so columns keep their natural width ===== */}
+              <table className="min-w-max w-full divide-y divide-gray-200 text-sm whitespace-nowrap">
                 <thead>
                   <tr className="bg-indigo-50">
                     {['Driver','Truck No','Cubic','Truck Type','Status','Username','TrackerID','Password (set new)','Action'].map((h) => (

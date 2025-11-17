@@ -14,7 +14,7 @@ const navItems = [
 
 export default function Sidebar({ active = "assign", onNav = () => {} }) {
   return (
-  <aside className="hidden md:flex fixed inset-y-5 left-6 w-50 panel flex-col justify-between p-6 z-40 shadow">
+    <aside className="hidden md:flex fixed inset-y-5 left-6 w-50 panel flex-col justify-between p-6 z-40 shadow">
       <div>
         <div className="flex justify-center mb-6">
           <div className="w-40 h-20 rounded-lg bg-white/75 p-2 flex items-center justify-center border border-indigo-100 backdrop-blur-sm">
@@ -22,13 +22,18 @@ export default function Sidebar({ active = "assign", onNav = () => {} }) {
           </div>
         </div>
 
-        <nav className="flex flex-col gap-2">
-          {navItems.map((n) => {
-            const isActive = n.id === active;
-            return (
-              <motion.button
-                key={n.id}
-                onClick={() => onNav(n.id)}
+        {/* Scrollable nav wrapper
+            - maxHeight leaves room for header + footer (adjust 260px if needed)
+            - overflow-y auto makes it scroll when needed
+        */}
+        <div style={{ maxHeight: 'calc(100vh - 260px)', overflowY: 'auto', paddingRight: 6 }}>
+          <nav className="flex flex-col gap-2">
+            {navItems.map((n) => {
+              const isActive = n.id === active;
+              return (
+                <motion.button
+                  key={n.id}
+                  onClick={() => onNav(n.id)}
                   className={
                     "w-full text-left px-3 py-3 rounded-lg flex items-center gap-3 transition " +
                     (isActive
@@ -37,14 +42,15 @@ export default function Sidebar({ active = "assign", onNav = () => {} }) {
                   }
                   whileHover={isActive ? { scale: 1.02 } : { scale: 1.03, rotate: 0.5 }}
                   whileTap={{ scale: 0.98 }}
-                aria-current={isActive ? "page" : undefined}
+                  aria-current={isActive ? "page" : undefined}
                 >
                   <span className="flex-none">{React.createElement(n.icon, { className: isActive ? "text-indigo-600" : "text-gray-400" })}</span>
-                <span className="font-medium">{n.label}</span>
+                  <span className="font-medium">{n.label}</span>
                 </motion.button>
-            );
-          })}
-        </nav>
+              );
+            })}
+          </nav>
+        </div>
       </div>
 
       <div>
@@ -58,9 +64,6 @@ export default function Sidebar({ active = "assign", onNav = () => {} }) {
     </aside>
   );
 }
-
-
-
 
 /* --------- small inline SVG icon components --------- */
 function HomeIcon({ className = "text-gray-400" }) {
