@@ -36,14 +36,27 @@ export default function CompletedTasks() {
         name: "Invoice No.",
         selector: (row) => row.invoiceId,
         sortable: true,
-        cell: (row) => (row.invoiceId),
-        grow: 0.6,
+        cell: (row) => row.invoiceId,
+        grow: 0.5,
       },
-      { name: "Order Number", selector: (row) => row.orderNumber, sortable: true, grow: 0.8 },
-      { name: "Postcode", selector: (row) => row.postalCode, sortable: true, grow: 0.4 },
-      { name: "Completed On", selector: (row) => row.completedAt, sortable: true, grow: 0.6, cell: (r) => <span className="text-sm text-gray-600">{r.completedAt.split("T")[0]}</span> },
-      { name: "Description", selector: (row) => row.description, grow: 1 },
-      { name: "Driver Name", selector: (row) => row.driverName, grow: 0.8 },
+      { name: "Order Number", selector: (row) => row.orderNumber, sortable: true, grow: 0.5 },
+
+      {
+        name: "Customer Name",
+        selector: (row) => row.name,
+        sortable: true,
+        grow: 0.8,
+        cell: (row) => (
+          // truncate visually but show full name on hover via native title tooltip
+          <span title={row.name} className="truncate max-w-[200px] block">
+            {row.name}
+          </span>
+        ),
+      },
+
+      { name: "Completed On", selector: (row) => row.completedAt, sortable: true, grow: 0.5, cell: (r) => <span className="text-sm text-gray-600">{r.completedAt.split("T")[0]}</span> },
+      { name: "Description", selector: (row) => row.description, grow: 0.7 },
+      { name: "Driver Name", selector: (row) => row.driverName, grow: 0.5 },
       {
         name: "Proof of Delivery",
         selector: (row) => row.POD,
@@ -64,31 +77,27 @@ export default function CompletedTasks() {
             </a>
           </div>
         ),
-        grow: 0.4,
+        grow: 0.3,
       },
     ],
     [navigate]
   );
 
-  // const filtered = useMemo(() => {
-  //   const q = (filter || "").trim().toLowerCase();
-  //   if (!q) return items || [];
-  //   return (items || []).filter((r) =>
-  //     ["invoice", "order", "postcode", "status", "description", "driver"].some((k) => String(r[k] ?? "").toLowerCase().includes(q))
-  //   );
-  // }, [filter, items]);
-   const filtered = useMemo(() => {
-      const q = (filter || "").trim().toLowerCase();
-      if (!q) return items || [];
-      const keys = ["invoiceId","invoice","orderNumber","order","zoneNo","postalCode","postcode","stateCode","status","description","driverName","driver"];
-      return (items || []).filter((r) => {
-        for (let k of keys) {
-          const v = String(r[k] ?? "");
-          if (v.toLowerCase().includes(q)) return true;
-        }
-        return false;
-      });
-    }, [filter, items]);
+  const filtered = useMemo(() => {
+    const q = (filter || "").trim().toLowerCase();
+    if (!q) return items || [];
+    const keys = [
+      "invoiceId","invoice","orderNumber","order","zoneNo","postalCode","postcode",
+      "stateCode","status","description","driverName","driver","name" // <-- added "name" for customer name search
+    ];
+    return (items || []).filter((r) => {
+      for (let k of keys) {
+        const v = String(r[k] ?? "");
+        if (v.toLowerCase().includes(q)) return true;
+      }
+      return false;
+    });
+  }, [filter, items]);
 
   return (
     <AnimatedContainer>
@@ -106,27 +115,27 @@ export default function CompletedTasks() {
             className="pl-3 pr-3 py-2 rounded-full border border-indigo-300 bg-white text-sm font-semibold placeholder-gray-500 shadow-sm"
           />
         </div>
-    </div>
+      </div>
 
-    <div className="panel p-3 rounded-2xl border border-indigo-100 relative">
-      <LoadingOverlay loading={loading} text="Loading completed tasks..." fullScreen={loading} />
-          {error && <div className="text-red-600 p-3">Error loading tasks...</div>}
-          <div className="mb-3 flex justify-end">
-            <button onClick={() => dispatch(fetchCompleted())} className="px-3 py-1 rounded bg-indigo-600 text-white text-sm hover:bg-indigo-700">Refresh</button>
-          </div>
-          <DataTable
-            columns={columns}
-            data={filtered}
-            // progressPending removed to avoid DataTable internal spinner
-            pagination
-            selectableRows
-            onSelectedRowsChange={(s) => setSelectedRows(s.selectedRows)}
-            selectableRowsHighlight
-            highlightOnHover
-            customStyles={customStyles}
-            defaultSortFieldId={1}
-            responsive
-          />
+      <div className="panel p-3 rounded-2xl border border-indigo-100 relative">
+        <LoadingOverlay loading={loading} text="Loading completed tasks..." fullScreen={loading} />
+        {error && <div className="text-red-600 p-3">Error loading tasks...</div>}
+        <div className="mb-3 flex justify-end">
+          <button onClick={() => dispatch(fetchCompleted())} className="px-3 py-1 rounded bg-indigo-600 text-white text-sm hover:bg-indigo-700">Refresh</button>
+        </div>
+        <DataTable
+          columns={columns}
+          data={filtered}
+          // progressPending removed to avoid DataTable internal spinner
+          pagination
+          selectableRows
+          onSelectedRowsChange={(s) => setSelectedRows(s.selectedRows)}
+          selectableRowsHighlight
+          highlightOnHover
+          customStyles={customStyles}
+          defaultSortFieldId={1}
+          responsive
+        />
       </div>
     </AnimatedContainer>
   );

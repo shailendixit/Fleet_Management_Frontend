@@ -4,14 +4,14 @@ import api from './apiClient';
  * Fetch completed tasks from backend
  */
 export async function getCompleted() {
-  return await api.get('/tasks/getCompletedTasks', { timeout: 30000 });
+  return await api.get('/tasks/getCompletedTasks', { timeout: 40000 });
 }
 
 /**
  * Fetch ongoing tasks from backend
  */
 export async function getOngoing() {
-  return await api.get('/tasks/getTasksInProgress', { timeout: 30000 });
+  return await api.get('/tasks/getTasksInProgress', { timeout: 40000 });
 }
 
 /**
@@ -19,7 +19,7 @@ export async function getOngoing() {
  * a small sample set is returned so you can test UI behaviour.
  */
 export async function getUnassigned() {
-  const res = await api.get('/tasks/getUnassignedTasks', { timeout: 30000 });
+  const res = await api.get('/tasks/getUnassignedTasks', { timeout: 40000 });
   if (res && res.success) return res;
 
   // fallback sample data for offline testing
@@ -33,11 +33,25 @@ export async function getUnassigned() {
   };
 }
 
+//----------Delete all task from backend---------
+export async function DeleteAllTasks() {
+  try {
+    const res = await api.del('/tasks/deleteAllTasks', { timeout: 40000 });
+    // return backend payload (assumes backend uses { success: true/false, ... })
+    return res.data;
+  } catch (err) {
+    // normalize error to match other service functions
+    if (err && err.response && err.response.data) {
+      return err.response.data;
+    }
+    return { success: false, error: err.message || 'Network error' };
+  }
+}
 /**
  * Fetch available drivers. Fallback sample used for dev/test.
  */
 export async function getDrivers() {
-  const res = await api.get('/tasks/getAvailableDrivers', { timeout: 30000 });
+  const res = await api.get('/tasks/getAvailableDrivers', { timeout: 40000 });
   if (res && res.success) return res;
   return { success: true, data: [ { id: 'd1', name: 'Adam' }, { id: 'd2', name: 'Mark' }, { id: 'd3', name: 'Lucy' } ] };
 }
@@ -48,7 +62,7 @@ export async function getDrivers() {
  */
 export async function assignTasks(payload) {
   // backend expects body like: { tasks: [ { taskId, truckNo, cubic, driverName, truckType }, ... ] }
-  return await api.post('/tasks/assignTasks', { tasks: payload }, { timeout: 15000 });
+  return await api.post('/tasks/assignTasks', { tasks: payload }, { timeout: 30000 });
 }
 
 /**
@@ -56,7 +70,7 @@ export async function assignTasks(payload) {
  * Returns: { success: true, data: VehiclesArray } or { success: false, error }
  */
 export async function getNetstarVehicles() {
-  return await api.get('/tasks/getLocation', { timeout: 30000 });
+  return await api.get('/tasks/getLocation', { timeout: 40000 });
 }
 
-export default { getCompleted, getOngoing, getUnassigned, getDrivers, assignTasks, getNetstarVehicles };
+export default { getCompleted, getOngoing, getUnassigned, getDrivers, assignTasks, getNetstarVehicles,DeleteAllTasks };

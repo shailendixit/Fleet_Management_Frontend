@@ -41,7 +41,7 @@ function getStoredToken() {
  * @param {object} options - Request options: method, headers, body, credentials, timeout
  * @returns {Promise<{success:boolean,status?:number,data?:any,error?:string}>}
  */
-async function request(path, { method = "GET", headers = {}, body, credentials = "include", timeout = 30000 } = {}) {
+async function request(path, { method = "GET", headers = {}, body, credentials = "include", timeout = 40000 } = {}) {
   const url = path.startsWith("http") ? path : `${BASE_URL}${path}`;
 
   const controller = new AbortController();

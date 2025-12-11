@@ -38,7 +38,9 @@ function AssignModal({ zone, tasks, drivers, onClose, onAssign }) {
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
       <div className="relative bg-white rounded-lg p-6 w-[900px] max-w-full shadow-lg">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xl font-semibold">Assign tasks — {zone && zone.toString().toLowerCase().includes('zone') ? zone : `${zone} Zone`}</h3>
+          <h3 className="text-xl font-semibold">
+            Assign tasks — {zone && zone.toString().toLowerCase().includes('route') ? zone : `${zone} Route`}
+          </h3>
           <div className="flex items-center gap-3">
             <select value={bulkDriver} onChange={(e) => setBulkDriver(e.target.value)} className="px-2 py-1 border rounded">
               <option value="">Assign selected to...</option>
@@ -64,40 +66,40 @@ function AssignModal({ zone, tasks, drivers, onClose, onAssign }) {
           </div>
         </div>
 
-            <div className="space-y-3 max-h-[60vh] overflow-auto">
-          {tasks.length === 0 && <div className="p-4 text-center text-gray-600">No tasks in this zone</div>}
+        <div className="space-y-3 max-h-[60vh] overflow-auto">
+          {tasks.length === 0 && <div className="p-4 text-center text-gray-600">No tasks in this route</div>}
           {tasks.map(t => {
-        const id = t.taskId ?? t.id; // support both shapes
-        return (
-        <div key={id} className="flex items-center justify-between p-3 border rounded">
-              <div className="flex items-start gap-3">
-                <label className="mt-1">
-          <input type="checkbox" checked={selected.has(id)} onChange={() => toggleSelect(id)} />
-                </label>
-                <div>
-                  <div className="font-medium">{t.orderNumber} — {t.description}</div>
-                 <div className="text-sm text-gray-500 flex space-x-4">
-                    <span>• Postcode: {t.postalCode}</span>
-                    <span>• StateCode: {t.stateCode}</span>
-                    <span>• RouteCode: {t.routeCode}</span>
-                    <span>• StopCode: {t.stopCode}</span>
-                    <span>• ShipTo: {t.shipTo}</span>
+            const id = t.taskId ?? t.id; // support both shapes
+            return (
+              <div key={id} className="flex items-center justify-between p-3 border rounded">
+                <div className="flex items-start gap-3">
+                  <label className="mt-1">
+                    <input type="checkbox" checked={selected.has(id)} onChange={() => toggleSelect(id)} />
+                  </label>
+                  <div>
+                    <div className="font-medium">{t.orderNumber} — {t.description}</div>
+                    <div className="text-sm text-gray-500 flex space-x-4">
+                      <span>• Postcode: {t.postalCode}</span>
+                      <span>• StateCode: {t.stateCode}</span>
+                      <span>• RouteCode: {t.routeCode}</span>
+                      <span>• StopCode: {t.stopCode}</span>
+                      <span>• ShipTo: {t.shipTo}</span>
+                    </div>
+                    <div className="text-sm text-gray-500 flex space-x-3">
+                      <span>• Quantity: {t.quantityOrdered}</span>
+                      <span>• Name: {t.name}</span>
+                      <span>• ItemNumber: {t.itemNumber}</span>
+                    </div>
+                    {t.podUrl && <div className="text-sm mt-1"><a href={t.podUrl} target="_blank" rel="noreferrer" className="text-indigo-600">View POD</a></div>}
                   </div>
-                 <div className="text-sm text-gray-500 flex space-x-3">
-                    <span>• Quantity: {t.quantityOrdered}</span>
-                    <span>• Name: {t.name}</span>
-                    <span>• ItemNumber: {t.itemNumber}</span>
-                  </div>
-                  {t.podUrl && <div className="text-sm mt-1"><a href={t.podUrl} target="_blank" rel="noreferrer" className="text-indigo-600">View POD</a></div>}
+                </div>
+                <div className="flex items-center gap-3">
+                  <select value={assignMap[id] || ''} onChange={(e) => handleChange(id, e.target.value)} className="px-2 py-1 border rounded bg-white">
+                    <option value="">Select driver</option>
+                    {drivers.map(d => <option key={d.driverId} value={d.driverId}>{d.driverName}{d.truckNo ? ` — ${d.truckNo}` : ''}</option>)}
+                  </select>
                 </div>
               </div>
-                <div className="flex items-center gap-3">
-                <select value={assignMap[id] || ''} onChange={(e) => handleChange(id, e.target.value)} className="px-2 py-1 border rounded bg-white">
-                  <option value="">Select driver</option>
-                  {drivers.map(d => <option key={d.driverId} value={d.driverId}>{d.driverName}{d.truckNo ? ` — ${d.truckNo}` : ''}</option>)}
-                </select>
-              </div>
-            </div>
             )
           })}
         </div>
@@ -111,6 +113,7 @@ export default function AssignTasks() {
   const [drivers, setDrivers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [zoneOpen, setZoneOpen] = useState(null);
+  const [deletingAll, setDeletingAll] = useState(false); // NEW: delete all state
   const { show } = useToast();
 
   useEffect(() => {
@@ -131,9 +134,10 @@ export default function AssignTasks() {
 
   const zones = useMemo(() => {
     const map = {};
-    const MISSING = 'Zone not mentioned';
+    const MISSING = 'Route not mentioned';
+    // Group by routeCode instead of zoneNo
     unassigned.forEach(t => {
-      const key = (t.zoneNo === null || t.zoneNo === undefined || String(t.zoneNo).trim() === '') ? MISSING : t.zoneNo;
+      const key = (t.routeCode === null || t.routeCode === undefined || String(t.routeCode).trim() === '') ? MISSING : t.routeCode;
       map[key] = (map[key] || []).concat(t);
     });
     return map;
@@ -176,6 +180,27 @@ export default function AssignTasks() {
     })();
   }
 
+  // NEW: delete all handler
+  const handleDeleteAll = async () => {
+    try {
+      setDeletingAll(true);
+      const res = await tasksService.DeleteAllTasks();
+      if (res && res.success) {
+        show('success', 'All tasks deleted');
+        setUnassigned([]); // clear local list
+        setZoneOpen(null);  // close modal if open
+      } else {
+        // if backend returned meaningful error, show it
+        const errMsg = (res && (res.error || JSON.stringify(res))) || 'Delete API failed';
+        show('error', errMsg);
+      }
+    } catch (e) {
+      show('error', 'Delete failed');
+    } finally {
+      setDeletingAll(false);
+    }
+  }
+
   return (
     <div>
       <AnimatedContainer className="mb-4">
@@ -184,28 +209,44 @@ export default function AssignTasks() {
             <h1 className="text-2xl font-semibold">Assign Tasks</h1>
             <div className="text-sm text-gray-600 mt-1">Unassigned tasks: <span className="ml-2 inline-block px-3 py-0.5 bg-amber-100 text-amber-800 rounded-full font-medium">{unassigned.length}</span></div>
           </div>
+
+          {/* NEW: Delete All button */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleDeleteAll}
+              className="px-3 py-1 rounded bg-red-600 text-white text-sm hover:bg-red-700 flex items-center gap-2"
+              disabled={deletingAll}
+            >
+              {deletingAll ? (
+                <svg className="w-4 h-4 animate-spin text-white" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="31.4 31.4" fill="none" />
+                </svg>
+              ) : null}
+              <span>Delete All Tasks</span>
+            </button>
+          </div>
         </div>
       </AnimatedContainer>
 
       <AnimatedContainer>
         <div className="max-h-[60vh] overflow-auto p-2">
-            <div className="relative">
-                {loading ? (
-                  <div className="w-full h-40 flex items-center justify-center">
-                    <Loading size={36} className="text-gray-700" color="#374151" />
-                  </div>
-                ) : (
-                  unassigned.length === 0 ? (
-                    <div className="w-full h-40 flex items-center justify-center text-gray-600">No unassigned tasks available</div>
-                  ) : (
-                    <div className="grid grid-cols-3 gap-4">
-                      {Object.entries(zones).map(([z, tasks]) => (
-                        <ZoneCard key={z} name={z} count={tasks.length} onOpen={(name) => setZoneOpen(name)} />
-                      ))}
-                    </div>
-                  )
-                )}
+          <div className="relative">
+            {loading ? (
+              <div className="w-full h-40 flex items-center justify-center">
+                <Loading size={36} className="text-gray-700" color="#374151" />
               </div>
+            ) : (
+              unassigned.length === 0 ? (
+                <div className="w-full h-40 flex items-center justify-center text-gray-600">No unassigned tasks available</div>
+              ) : (
+                <div className="grid grid-cols-3 gap-4">
+                  {Object.entries(zones).map(([z, tasks]) => (
+                    <ZoneCard key={z} name={z} count={tasks.length} onOpen={(name) => setZoneOpen(name)} />
+                  ))}
+                </div>
+              )
+            )}
+          </div>
         </div>
       </AnimatedContainer>
 
