@@ -47,6 +47,23 @@ export async function DeleteAllTasks() {
     return { success: false, error: err.message || 'Network error' };
   }
 }
+
+// deallocate function
+// ---------- Unassign task (move from assignedTask_DB back to task_DB) ----------
+export async function unassignTask(assignedTaskId) {
+  try {
+    const res = await api.del(`/tasks/unassignTask/${assignedTaskId}`, {
+      timeout: 40000,
+    });
+    return res.data;
+  } catch (err) {
+    if (err && err.response && err.response.data) {
+      return err.response.data;
+    }
+    return { success: false, error: err.message || "Network error" };
+  }
+}
+
 /**
  * Fetch available drivers. Fallback sample used for dev/test.
  */
@@ -73,4 +90,4 @@ export async function getNetstarVehicles() {
   return await api.get('/tasks/getLocation', { timeout: 40000 });
 }
 
-export default { getCompleted, getOngoing, getUnassigned, getDrivers, assignTasks, getNetstarVehicles,DeleteAllTasks };
+export default { getCompleted, getOngoing, getUnassigned, getDrivers, assignTasks, getNetstarVehicles,DeleteAllTasks,unassignTask };

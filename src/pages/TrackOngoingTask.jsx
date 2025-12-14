@@ -25,6 +25,8 @@ export default function TrackOngoing() {
   const { items, loading, error } = useSelector(selectOngoing);
   const [filter, setFilter] = useState("");
   const [selectedRows, setSelectedRows] = useState([]);
+const [confirmRow, setConfirmRow] = useState(null);
+const [deallocating, setDeallocating] = useState(false);
 
   // 🚀 NEW: index by driverName only
   const [vehiclesByDriver, setVehiclesByDriver] = useState({});
@@ -55,6 +57,26 @@ export default function TrackOngoing() {
       setVehiclesByDriver({});
     }
   };
+ const handleDeallocate = async () => {
+  if (!confirmRow) return;
+
+  try {
+    setDeallocating(true);
+    const res = await tasksService.unassignTask(confirmRow.assignedTaskId);
+
+    if (res && res.success) {
+      show("success", "Task deallocated successfully");
+      setConfirmRow(null);
+      await dispatch(fetchOngoing()).unwrap(); // refresh list safely
+    } else {
+      show("error", res?.error || "Failed to deallocate task");
+    }
+  } catch (err) {
+    show("error", "Failed to deallocate task");
+  } finally {
+    setDeallocating(false);
+  }
+};
 
   // fetch data on mount
   useEffect(() => {
@@ -121,6 +143,21 @@ export default function TrackOngoing() {
           );
         },
       },
+      {
+  name: "Action",
+  cell: (row) => (
+    <button
+      onClick={() => setConfirmRow(row)}
+      className="px-2 py-1 text-xs rounded bg-blue-300 text-white hover:bg-blue-400"
+    >
+      Deallocate
+    </button>
+  ),
+  ignoreRowClick: true,
+  allowOverflow: true,
+  button: true,
+},
+
     ],
     [vehiclesByDriver, lastNetstarRefresh]
   );
@@ -230,6 +267,37 @@ export default function TrackOngoing() {
           />
         </div>
       </AnimatedContainer>
+
+      {confirmRow && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div
+      className="absolute inset-0 bg-black/40"
+      onClick={() => setConfirmRow(null)}
+    />
+    <div className="relative bg-white rounded-lg p-6 w-[420px] shadow-lg">
+      <h3 className="text-lg font-semibold mb-3">Confirm Deallocation</h3>
+      <p className="text-sm text-gray-600 mb-4">
+        Are you sure you want to deallocate this task?
+      </p>
+      <div className="flex justify-end gap-3">
+        <button
+          onClick={() => setConfirmRow(null)}
+          className="px-3 py-1 rounded bg-gray-200"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleDeallocate}
+          disabled={deallocating}
+          className="px-3 py-1 rounded bg-blue-500 text-white hover:bg-blue-600"
+        >
+          {deallocating ? "Processing..." : "Yes, Deallocate"}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }
