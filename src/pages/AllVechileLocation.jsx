@@ -87,7 +87,7 @@ export default function AllVehiclesMap() {
         }));
         setVehicles(items);
       } else {
-        throw new Error("Invalid response from location API");
+        throw new Error("Invalid response from NETSTAR");
       }
       setInitialLoaded(true);
     } catch (e) {
