@@ -39,8 +39,6 @@ export default function CompletedTasks() {
         cell: (row) => row.invoiceId,
         grow: 0.5,
       },
-      { name: "Order Number", selector: (row) => row.orderNumber, sortable: true, grow: 0.5 },
-
       {
         name: "Customer Name",
         selector: (row) => row.name,
@@ -53,8 +51,25 @@ export default function CompletedTasks() {
           </span>
         ),
       },
+       { name: "Completed On", selector: (row) => row.completedAt, sortable: true, grow: 0.5, cell: (r) => <span className="text-sm text-gray-600">{r.completedAt.split("T")[0]}</span> },
+     { 
+  name: "Completion Time", 
+  selector: (row) =>
+    new Date(row.completedAt).toLocaleString("en-AU", {
+      timeZone: "Australia/Sydney",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    }),
+  sortable: true, 
+  grow: 0.5 
+},
 
-      { name: "Completed On", selector: (row) => row.completedAt, sortable: true, grow: 0.5, cell: (r) => <span className="text-sm text-gray-600">{r.completedAt.split("T")[0]}</span> },
+
+      
+
+     
       { name: "Description", selector: (row) => row.description, grow: 0.7 },
       { name: "Driver Name", selector: (row) => row.driverName, grow: 0.5 },
       {
