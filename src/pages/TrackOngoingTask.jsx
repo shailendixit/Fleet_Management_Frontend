@@ -101,18 +101,18 @@ const [deallocating, setDeallocating] = useState(false);
   const columns = useMemo(
     () => [
       { name: "Invoice No.", selector: (row) => row.invoiceId ?? row.invoice, sortable: true },
-      { name: "Order Number", selector: (row) => row.orderNumber ?? row.order, sortable: true },
-      { name: "RouteCode", selector: (row) => row.routeCode, sortable: true },
-      { name: "Customer Name", selector: (row) => row.name, sortable: true, cell: (r) => <span className="text-sm text-gray-600">{r.name}</span> },
+      { name: "Order Number", selector: (row) => row.ordernumber ?? row.order, sortable: true },
+      { name: "RouteCode", selector: (row) => row.routecode, sortable: true },
+      { name: "Customer Name", selector: (row) => row.shiptoname, sortable: true, cell: (r) => <span className="text-sm text-gray-600">{r.shiptoname}</span> },
       {
   name: "Description",
-  selector: (row) => row.description,
+  selector: (row) => row.description1,
   cell: (row) => (
     <span
-      title={row.description}
+      title={row.description1}
       className="block max-w-[220px] truncate text-sm text-gray-700"
     >
-      {row.description}
+      {row.description1}
     </span>
   ),
 },
@@ -178,7 +178,7 @@ const [deallocating, setDeallocating] = useState(false);
   const filtered = useMemo(() => {
     const q = (filter || "").trim().toLowerCase();
     if (!q) return items || [];
-    const keys = ["invoiceId","invoice","orderNumber","order","routeCode","postalCode","postcode","name","status","description","driverName","driver"];
+    const keys = ["invoiceId","invoice","ordernumber","order","routecode","postalCode","postcode","shiptoname","status","description1","driverName","driver"];
     return (items || []).filter((r) =>
       keys.some((k) => String(r[k] || "").toLowerCase().includes(q))
     );

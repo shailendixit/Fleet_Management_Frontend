@@ -41,13 +41,13 @@ export default function CompletedTasks() {
       },
       {
         name: "Customer Name",
-        selector: (row) => row.name,
+        selector: (row) => row.shiptoname,
         sortable: true,
         grow: 0.8,
         cell: (row) => (
           // truncate visually but show full name on hover via native title tooltip
-          <span title={row.name} className="truncate max-w-[200px] block">
-            {row.name}
+          <span title={row.shiptoname} className="truncate max-w-[200px] block">
+            {row.shiptoname}
           </span>
         ),
       },
@@ -70,7 +70,7 @@ export default function CompletedTasks() {
       
 
      
-      { name: "Description", selector: (row) => row.description, grow: 0.7 },
+      { name: "Description", selector: (row) => row.description1, grow: 0.7 },
       { name: "Driver Name", selector: (row) => row.driverName, grow: 0.5 },
       {
         name: "Proof of Delivery",

@@ -67,42 +67,89 @@ function AssignModal({ zone, tasks, drivers, onClose, onAssign }) {
         </div>
 
         <div className="space-y-3 max-h-[60vh] overflow-auto">
-          {tasks.length === 0 && <div className="p-4 text-center text-gray-600">No tasks in this route</div>}
-          {tasks.map(t => {
-            const id = t.taskId ?? t.id; // support both shapes
-            return (
-              <div key={id} className="flex items-center justify-between p-3 border rounded">
-                <div className="flex items-start gap-3">
-                  <label className="mt-1">
-                    <input type="checkbox" checked={selected.has(id)} onChange={() => toggleSelect(id)} />
-                  </label>
-                  <div>
-                    <div className="font-medium">{t.orderNumber} — {t.description}</div>
-                    <div className="text-sm text-gray-500 flex space-x-4">
-                      <span>• Postcode: {t.postalCode}</span>
-                      <span>• StateCode: {t.stateCode}</span>
-                      <span>• RouteCode: {t.routeCode}</span>
-                      <span>• StopCode: {t.stopCode}</span>
-                      <span>• ShipTo: {t.shipTo}</span>
-                    </div>
-                    <div className="text-sm text-gray-500 flex space-x-3">
-                      <span>• Quantity: {t.quantityOrdered}</span>
-                      <span>• Name: {t.name}</span>
-                      <span>• ItemNumber: {t.itemNumber}</span>
-                    </div>
-                    {t.podUrl && <div className="text-sm mt-1"><a href={t.podUrl} target="_blank" rel="noreferrer" className="text-indigo-600">View POD</a></div>}
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <select value={assignMap[id] || ''} onChange={(e) => handleChange(id, e.target.value)} className="px-2 py-1 border rounded bg-white">
-                    <option value="">Select driver</option>
-                    {drivers.map(d => <option key={d.driverId} value={d.driverId}>{d.driverName}{d.truckNo ? ` — ${d.truckNo}` : ''}</option>)}
-                  </select>
-                </div>
+  {tasks.length === 0 && (
+    <div className="p-4 text-center text-gray-600">
+      No tasks in this route
+    </div>
+  )}
+
+  {tasks.map(t => {
+    const id = t.taskid ?? t.taskId ?? t.id;
+
+    return (
+      <div key={id} className="flex items-center justify-between p-3 border rounded">
+        <div className="flex items-start gap-3">
+
+          {/* Checkbox */}
+          <label className="mt-1">
+            <input
+              type="checkbox"
+              checked={selected.has(id)}
+              onChange={() => toggleSelect(id)}
+            />
+          </label>
+
+          <div>
+
+            {/* Order + Customer */}
+            <div className="font-medium">
+              {t.ordernumber} — {t.shiptoname}
+            </div>
+
+            {/* Invoice + Description */}
+            <div className="text-sm text-gray-500 flex flex-wrap gap-x-4 gap-y-1">
+              <span>• Invoice: {t.invoiceId}</span>
+              <span>• Description: {t.description1}</span>
+            </div>
+
+            {/* Address */}
+            <div className="text-sm text-gray-500 flex flex-wrap gap-x-4 gap-y-1">
+              <span>
+                • Address: {t.address1} - {t.city} - {t.postcode}
+              </span>
+            </div>
+
+            {/* Quantity */}
+            <div className="text-sm text-gray-500 flex flex-wrap gap-x-4 gap-y-1">
+              <span>• Quantity: {t.quantity}</span>
+            </div>
+
+            {t.podUrl && (
+              <div className="text-sm mt-1">
+                <a
+                  href={t.podUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-indigo-600"
+                >
+                  View POD
+                </a>
               </div>
-            )
-          })}
+            )}
+
+          </div>
         </div>
+
+        {/* Driver Select (UNCHANGED) */}
+        <div className="flex items-center gap-3">
+          <select
+            value={assignMap[id] || ''}
+            onChange={(e) => handleChange(id, e.target.value)}
+            className="px-2 py-1 border rounded bg-white"
+          >
+            <option value="">Select driver</option>
+            {drivers.map(d => (
+              <option key={d.driverId} value={d.driverId}>
+                {d.driverName}{d.truckNo ? ` — ${d.truckNo}` : ''}
+              </option>
+            ))}
+          </select>
+        </div>
+
+      </div>
+    );
+  })}
+</div>
       </div>
     </div>
   )
@@ -135,9 +182,9 @@ export default function AssignTasks() {
   const zones = useMemo(() => {
     const map = {};
     const MISSING = 'Route not mentioned';
-    // Group by routeCode instead of zoneNo
+    // Group by routecode instead of zoneNo
     unassigned.forEach(t => {
-      const key = (t.routeCode === null || t.routeCode === undefined || String(t.routeCode).trim() === '') ? MISSING : t.routeCode;
+      const key = (t.routecode === null || t.routecode === undefined || String(t.routecode).trim() === '') ? MISSING : t.routecode;
       map[key] = (map[key] || []).concat(t);
     });
     return map;
@@ -166,7 +213,7 @@ export default function AssignTasks() {
           show('success', 'Assignments saved');
           // remove assigned tasks locally
           const assignedIds = tasks.map(p => p.taskId);
-          setUnassigned((s) => s.filter(t => !assignedIds.includes(t.taskId ?? t.id)));
+          setUnassigned((s) => s.filter(t => !assignedIds.includes(t.taskid ?? t.taskId ?? t.id)));
           setZoneOpen(null);
           return res;
         } else {
@@ -272,7 +319,7 @@ export default function AssignTasks() {
               if (res && res.success) {
                 show('success', 'Assignments saved');
                 const assignedIds = tasksPayload.map(p => p.taskId);
-                setUnassigned((s) => s.filter(t => !assignedIds.includes(t.taskId ?? t.id)));
+                setUnassigned((s) => s.filter(t => !assignedIds.includes(t.taskid ?? t.taskId ?? t.id)));
                 setZoneOpen(null);
               } else {
                 show('error', (res && (res.error || JSON.stringify(res.data))) || 'Assign API failed');
