@@ -70,7 +70,7 @@ export default function CompletedTasks() {
       
 
      
-      { name: "Description", selector: (row) => row.description1, grow: 0.7 },
+      // { name: "Description", selector: (row) => row.description1, grow: 0.7 },
       { name: "Driver Name", selector: (row) => row.driverName, grow: 0.5 },
       {
         name: "Proof of Delivery",
