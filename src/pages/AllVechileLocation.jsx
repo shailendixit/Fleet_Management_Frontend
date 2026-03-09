@@ -70,6 +70,7 @@ export default function AllVehiclesMap() {
 
     try {
       const res = await tasksService.getNetstarVehicles();
+      console.log(res);
       if (res && res.success && res.data?.Vehicles) {
         const items = res.data.Vehicles.map(v => ({
           ...v,

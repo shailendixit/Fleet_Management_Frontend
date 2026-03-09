@@ -38,7 +38,7 @@ const [deallocating, setDeallocating] = useState(false);
   const fetchNetstarVehicles = async () => {
     try {
       const res = await tasksService.getNetstarVehicles();
-
+      console.log(res);
       if (res && res.success && res.data?.Vehicles) {
         const index = {};
 
