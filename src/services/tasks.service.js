@@ -87,7 +87,8 @@ export async function assignTasks(payload) {
  * Returns: { success: true, data: VehiclesArray } or { success: false, error }
  */
 export async function getNetstarVehicles() {
-  return await api.get('/tasks/getLocation', { timeout: 40000 });
+  const res = await api.get('/tasks/getLocation', { timeout: 40000 });
+  return res.data;
 }
 
 export default { getCompleted, getOngoing, getUnassigned, getDrivers, assignTasks, getNetstarVehicles,DeleteAllTasks,unassignTask };
