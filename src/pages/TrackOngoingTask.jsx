@@ -36,29 +36,27 @@ const [deallocating, setDeallocating] = useState(false);
 
   // ✔ Fetch Netstar vehicles and build index: driverName → vehicle
   const fetchNetstarVehicles = async () => {
-  try {
-    const res = await tasksService.getNetstarVehicles();
+    try {
+      const res = await tasksService.getNetstarVehicles();
 
-    const vehicles = res?.data?.Vehicles || res?.Vehicles;
+      if (res && res.success && res.data?.Vehicles) {
+        const index = {};
 
-    if (vehicles && Array.isArray(vehicles)) {
-      const index = {};
+        res.data.Vehicles.forEach((v) => {
+          const driver = norm(v.DriverShortName || v.Driver || "");
+          if (driver) index[driver] = v;
+        });
 
-      vehicles.forEach((v) => {
-        const driver = norm(v.DriverShortName || v.Driver || "");
-        if (driver) index[driver] = v;
-      });
-
-      setVehiclesByDriver(index);
-      setLastNetstarRefresh(new Date());
-    } else {
+        setVehiclesByDriver(index);
+        setLastNetstarRefresh(new Date());
+      } else {
+        setVehiclesByDriver({});
+      }
+    } catch (err) {
+      console.warn("Netstar fetch failed", err);
       setVehiclesByDriver({});
     }
-  } catch (err) {
-    console.warn("Netstar fetch failed", err);
-    setVehiclesByDriver({});
-  }
-};
+  };
  const handleDeallocate = async () => {
   if (!confirmRow) return;
 
