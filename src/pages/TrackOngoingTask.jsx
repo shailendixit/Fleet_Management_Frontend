@@ -29,7 +29,7 @@ const [confirmRow, setConfirmRow] = useState(null);
 const [deallocating, setDeallocating] = useState(false);
 
   // 🚀 NEW: index by driverName only
-  const [vehiclesByDriver, setVehiclesByDriver] = useState({});
+  const [vehiclesByTracker, setVehiclesByTracker] = useState({});
 
   const [lastNetstarRefresh, setLastNetstarRefresh] = useState(null);
   const { show } = useToast();
@@ -42,12 +42,11 @@ const [deallocating, setDeallocating] = useState(false);
       if (res && res.success && res.data?.Vehicles) {
         const index = {};
 
-        res.data.Vehicles.forEach((v) => {
-          const driver = norm(v.DriverShortName || v.Driver || "");
-          if (driver) index[driver] = v;
-        });
+res.data.Vehicles.forEach((v) => {
+  if (v.TrackerID) index[v.TrackerID] = v;
+});
 
-        setVehiclesByDriver(index);
+setVehiclesByTracker(index);
         setLastNetstarRefresh(new Date());
       } else {
         setVehiclesByDriver({});
@@ -92,10 +91,10 @@ const [deallocating, setDeallocating] = useState(false);
 
   // get vehicle only by driver name
   const getVehicleForRow = (row) => {
-    const driver = norm(row.driverName || row.driver || "");
-    if (!driver) return null;
-    return vehiclesByDriver[driver] || null;
-  };
+  const trackerId = row.trackerId || row.TrackerID;
+  if (!trackerId) return null;
+  return vehiclesByTracker[trackerId] || null;
+};
 
   // table columns
   const columns = useMemo(
@@ -171,7 +170,7 @@ const [deallocating, setDeallocating] = useState(false);
 },
 
     ],
-    [vehiclesByDriver, lastNetstarRefresh]
+    [vehiclesByTracker, lastNetstarRefresh]
   );
 
   // search
